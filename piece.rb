@@ -10,9 +10,16 @@ class Piece
     @color = color   #:black or :white
   end
 
+  def inspect
+    @piece_name
+  end
+
   def valid_moves
     all_valid_moves = moves
-    return all_valid_moves.select do |pos|
+
+    # p all_valid_moves
+    all_valid_moves.select do |pos|
+      # p move_into_check?(pos)
       move_into_check?(pos) == false
     end
   end
@@ -20,6 +27,10 @@ class Piece
   def move_into_check?(pos)
     # return false
     temp_board = @board.dup
+    start_pos = @piece_pos
+    temp_board.move!(start_pos, pos)
+    # p @color
+    temp_board.in_check?(@color)
 
   end
 
@@ -165,7 +176,8 @@ class Pawn < Piece
     move_times.times do
       pos[0] += @advance_diff[0]
       pos[1] += @advance_diff[1]
-      possible_advance_moves << pos.dup if can_advance_to?(pos)
+      break unless can_advance_to?(pos)
+      possible_advance_moves << pos.dup
     end
     possible_advance_moves
   end

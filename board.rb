@@ -38,31 +38,34 @@ class Board
     @grid[0][4] = King.new("King", [0, 4], self, :black)
     @grid[7][4] = King.new("King", [7, 4], self, :white)
 
-    @kings_ref[:b] = @grid[0][4]
-    @kings_ref[:w] = @grid[7][4]
-
+    @kings_ref[:black] = @grid[0][4]
+    @kings_ref[:white] = @grid[7][4]
+    # p @kings_ref
   end
 
   # need to be re-written !!!!!!!!
-  def move(start, end_pos)
-    raise "Error: no piece at start position!" if @grid[start] == nil
-    new_board = self.dup
-    new_grid = new_board.grid
-    new_grid[end_pos] = new_grid[start]
-    new_grid[start] = nil
-    if valid_move?(new_grid)
-      #may need to delete the eaten piece from the memory
-      @grid = new_grid
-      @grid[end_pos[0]][end_pos[1]].piece_pos = end_pos
+  def move(start_pos, end_pos)
+    raise "Error: no piece at start position!" if self[start_pos] == nil
+    # new_board = self.dup
+    # new_grid = new_board.grid
+    # new_grid[end_pos] = new_grid[start]
+    # new_grid[start] = nil
+    moving_piece = self[start_pos]
+    if moving_piece.valid_moves.include?(end_pos)
+      self.move!(start_pos, end_pos)
+    elsif self[start_pos].move_into_check?(end_pos)
+      raise "Error: King will be in check!"
     else
       raise "Error: the piece cannot move to end position!"
     end
   end
 
   def in_check?(color)
+    # p color
+    # p @kings_ref
     king_pos = @kings_ref[color].piece_pos
     opponent_moves = []
-    opponent_color = (color == :w) ? :b : :w
+    opponent_color = (color == :white) ? :black : :white
     surviving_pieces(opponent_color).each do |piece|
       opponent_moves.concat(piece.moves)
     end
@@ -85,7 +88,10 @@ class Board
         new_grid[row_idx][col_idx] = piece.dup(new_board) unless piece == nil
       end
     end
-    new_board.kings_ref = @kings_ref.dup
+
+    new_board.kings_ref[:black] = new_board[@kings_ref[:black].piece_pos]
+    new_board.kings_ref[:white] = new_board[@kings_ref[:white].piece_pos]
+
     new_board
   end
 
@@ -112,6 +118,8 @@ class Board
   end
 
   def move!(start_pos, end_pos)
+    #may need to delete the eaten piece from the memory
+    self[end_pos].piece_pos = nil
     self[end_pos] = self[start_pos]
     self[start_pos] = nil
     self[end_pos].piece_pos = end_pos
@@ -120,7 +128,7 @@ class Board
 end
 
 b = Board.new
-b.default_board
+# b.default_board
 # g = Board.new
 # g.default_board
 # p b.grid[0][4].moves
@@ -128,10 +136,10 @@ b.default_board
 # b.grid[6][3] = Pawn.new("Pawn", [6, 3], self, :white)
 # p b.grid[7][2].moves
 g = b.dup
-g.grid[5][3] = Knight.new("Knight", [5, 3], g, :black)
-g.grid[5][1] = Knight.new("Knight", [5, 1], g, :black)
-g.grid[5][2] = Pawn.new("Pawn", [5, 2], g, :white)
-p g.grid[5][2].moves
+g.grid[5][4] = Rook.new("Rook", [5, 4], g, :black)
+g.grid[5][3] = Rook.new("Rook", [5, 3], g, :black)
+# g.grid[5][2] = Pawn.new("Pawn", [5, 2], g, :white)
+g.move([6, 4], [5, 3])
 # p g.grid
 # b.grid[5][3] = Knight.new("Knight", [5, 3], b, :black)
 # g.grid[5][3] = Knight.new("Knight", [5, 3], g, :black)
