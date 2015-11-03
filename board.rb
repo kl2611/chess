@@ -1,4 +1,5 @@
 require_relative 'piece'
+require 'byebug'
 class Board
   attr_accessor :grid
   def initialize(grid = nil)
@@ -36,6 +37,11 @@ class Board
     @grid[0][4] = King.new("King", [0, 4], self, {:b => "black"})
     @grid[7][4] = King.new("King", [7, 4], self, {:w => "white"})
 
+    @kings_ref = {
+      :b => @grid[0][4],
+      :w => @grid[7][4]
+    }
+
   end
 
   def move(start, end_pos)
@@ -44,10 +50,29 @@ class Board
     new_grid[end_pos] = new_grid[start]
     new_grid[start] = nil
     if valid_move?(new_grid)
+      #may need to delete the eaten piece from the memory
       @grid = new_grid
+      @grid[end_pos[0]][end_pos[1]].piece_pos = end_pos
     else
       raise "Error: the piece cannot move to end position!"
     end
+  end
+
+  def in_check?(side)
+    king_pos = @kings_ref[side].piece_pos
+    opponent_moves = []
+    opponent_side_key = (side == :w) ? :b : :w
+    surviving_pieces(opponent_side_key).each do |piece|
+      opponent_moves.concat(piece.moves)
+    end
+    return opponent_moves.include?(king_pos)
+  end
+
+  def surviving_pieces(side)
+    return @grid.flatten.select { |piece| piece!=nil && piece.side.keys.first == side }
+  end
+
+  def checkmate?(side)
   end
 
   def replicate_board
@@ -62,6 +87,9 @@ class Board
     x, y = pos
     return @grid[x][y]
   end
+
+  # def []=()
+  # end
 
   def rows
     @grid
@@ -79,4 +107,6 @@ b.default_board
 # p b.grid[0][4].moves
 # p b.grid[0][1].moves
 # b.grid[6][3] = Pawn.new("Pawn", [6, 3], self, {:w => "white"})
-p b.grid[7][2].moves
+# p b.grid[7][2].moves
+b.grid[5][3] = Knight.new("Knight", [5, 3], self, {:b => "black"})
+p b.in_check?(:w)

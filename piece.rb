@@ -38,11 +38,14 @@ class Piece
     @board = board
     @side = side   #:b=>black, :w=>white
   end
+
+
   #
   # def moves
   #
   # end
   def validate(pos)
+    byebug
     if @board.in_bounds?(pos)==false
       return false
     elsif @board[pos] == nil || @board[pos].side != self.side
@@ -135,4 +138,9 @@ class Pawn < Piece
   def initialize(piece_name, piece_pos, board, side)
     super
   end
+
+  def moves
+    return []
+  end
+
 end
