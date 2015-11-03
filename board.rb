@@ -1,39 +1,41 @@
+require_relative 'piece'
 class Board
-
+  attr_accessor :grid
   def initialize(grid = nil)
-    @grid = Array.new(8) {Array.new(8)}
-    default_board
+    @grid ||= Array.new(8) {Array.new(8)}
+    # default_board
   end
 
   def default_board
-    @grid[1].each do |piece|
-      piece = Pawn.new
+    @grid[1].each_with_index do |piece, col_idx|
+      @grid[1][col_idx] = Pawn.new("Pawn", [1, col_idx], self, {:b => "black"})
     end
 
-    @grid[6].each do |piece|
-      piece = Pawn.new
+    @grid[6].each_with_index do |piece, col_idx|
+      @grid[6][col_idx] = Pawn.new("Pawn", [6, col_idx], self, {:w => "white"})
     end
 
-    @grid[0][0] = Rook.new
-    @grid[0][7] = Rook.new
-    @grid[7][0] = Rook.new
-    @grid[7][7] = Rook.new
+    @grid[0][0] = Rook.new("Rook", [0, 0], self, {:b => "black"})
+    @grid[0][7] = Rook.new("Rook", [0, 7], self, {:b => "black"})
+    @grid[7][0] = Rook.new("Rook", [7, 0], self, {:w => "white"})
+    @grid[7][7] = Rook.new("Rook", [7, 7], self, {:w => "white"})
 
-    @grid[0][1] = Knight.new
-    @grid[0][6] = Knight.new
-    @grid[7][1] = Knight.new
-    @grid[7][6] = Knight.new
+    @grid[0][1] = Knight.new("Knight", [0, 1], self, {:b => "black"})
+    @grid[0][6] = Knight.new("Knight", [0, 6], self, {:b => "black"})
+    @grid[7][1] = Knight.new("Knight", [7, 1], self, {:w => "white"})
+    @grid[7][6] = Knight.new("Knight", [7, 6], self, {:w => "white"})
 
-    @grid[0][2] = Bishop.new
-    @grid[0][5] = Bishop.new
-    @grid[7][2] = Bishop.new
-    @grid[7][5] = Bishop.new
+    @grid[0][2] = Bishop.new("Bishop", [0, 2], self, {:b => "black"})
+    @grid[0][5] = Bishop.new("Bishop", [0, 5], self, {:b => "black"})
+    @grid[7][2] = Bishop.new("Bishop", [7, 2], self, {:w => "white"})
+    @grid[7][5] = Bishop.new("Bishop", [7, 5], self, {:w => "white"})
 
-    @grid[0][3] = Queen.new
-    @grid[7][3] = Queen.new
+    @grid[0][3] = Queen.new("Queen", [0, 3], self, {:b => "black"})
+    @grid[7][3] = Queen.new("Queen", [7, 3], self, {:w => "white"})
 
-    @grid[0][4] = King.new
-    @grid[7][4] = King.new
+    @grid[0][4] = King.new("King", [0, 4], self, {:b => "black"})
+    @grid[7][4] = King.new("King", [7, 4], self, {:w => "white"})
+
   end
 
   def move(start, end_pos)
@@ -58,7 +60,23 @@ class Board
 
   def [](pos)
     x, y = pos
-  return @grid[x][y]
+    return @grid[x][y]
+  end
+
+  def rows
+    @grid
+  end
+
+  def in_bounds?(pos)
+    x , y = pos
+    return x.between?(0,7) && y.between?(0,7)
   end
 
 end
+
+b = Board.new
+b.default_board
+# p b.grid[0][4].moves
+# p b.grid[0][1].moves
+# b.grid[6][3] = Pawn.new("Pawn", [6, 3], self, {:w => "white"})
+p b.grid[7][2].moves
