@@ -32,11 +32,11 @@ class Piece
   # end
   def can_occupy?(pos)
     if @board.in_bounds?(pos) == false
-      return false
+      false
     elsif @board[pos] == nil || @board[pos].color != self.color
-      return true
+      true
     else
-      return false
+      false
     end
   end
 
@@ -127,24 +127,59 @@ class Pawn < Piece
         [1, 1],
         [1, -1]
       ]
-      @advance_diff = [
-        [1, 0],
-        [2, 0]
-      ]
-    else
+      @advance_diff = [1, 0]
+    elsif @color == :white
       @capture_diff = [
         [-1, 1],
         [-1, -1]
       ]
-      @advance_diff = [
-        [-1, 0],
-        [-2, 0]
-      ]
+      @advance_diff = [-1, 0]
     end
   end
 
   def moves
-    return []
+    [].concat(capture_moves).concat(advance_moves)
   end
+
+  def capture_moves
+    possible_capture_moves = []
+    @capture_diff.each do |move_diff|
+      pos = @piece_pos.dup
+      pos[0] += move_diff[0]
+      pos[1] += move_diff[1]
+
+      possible_capture_moves << pos if can_capture?(pos)
+    end
+    possible_capture_moves
+  end
+
+  def can_capture?(pos)
+    @board.in_bounds?(pos) && @board[pos] != nil && @board[pos].color != @color
+  end
+
+  def advance_moves
+    possible_advance_moves = []
+    move_times = 1
+    move_times += 1 if initial_move?
+    pos = @piece_pos.dup
+    move_times.times do
+      pos[0] += @advance_diff[0]
+      pos[1] += @advance_diff[1]
+      possible_advance_moves << pos.dup if can_advance_to?(pos)
+    end
+    possible_advance_moves
+  end
+
+  def initial_move?
+    ( @color == :black && @piece_pos[0] == 1 ) ||
+       ( @color == :white && @piece_pos[0] == 6 )
+  end
+
+  def can_advance_to?(pos)
+    @board.in_bounds?(pos) && @board[pos].nil?
+  end
+
+
+
 
 end

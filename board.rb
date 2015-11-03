@@ -70,7 +70,7 @@ class Board
   end
 
   def surviving_pieces(color)
-    return @grid.flatten.select { |piece| piece!=nil && piece.color == color }
+    return @grid.flatten.select { |piece| piece != nil && piece.color == color }
   end
 
   def checkmate?(color)
@@ -80,9 +80,9 @@ class Board
   def dup
     new_board = Board.new(false)
     new_grid = new_board.grid
-    @grid.each_with_index do |row, x|
-      row.each_with_index do |piece, y|
-        new_grid[x][y] = piece.dup(new_board) unless piece == nil
+    @grid.each_with_index do |row, row_idx|
+      row.each_with_index do |piece, col_idx|
+        new_grid[row_idx][col_idx] = piece.dup(new_board) unless piece == nil
       end
     end
     new_board.kings_ref = @kings_ref.dup
@@ -90,13 +90,13 @@ class Board
   end
 
   def [](pos)
-    x, y = pos
-    return @grid[x][y]
+    row_idx, col_idx  = pos
+    @grid[row_idx][col_idx]
   end
 
   def []=(pos, value)
-    x, y = pos
-    @grid[x][y] = value
+    row_idx, col_idx = pos
+    @grid[row_idx][col_idx] = value
   end
 
   # def []=()
@@ -107,8 +107,8 @@ class Board
   end
 
   def in_bounds?(pos)
-    x , y = pos
-    return x.between?(0,7) && y.between?(0,7)
+    row_idx, col_idx = pos
+    return row_idx.between?(0,7) && col_idx.between?(0,7)
   end
 
   def move!(start_pos, end_pos)
@@ -128,11 +128,15 @@ b.default_board
 # b.grid[6][3] = Pawn.new("Pawn", [6, 3], self, :white)
 # p b.grid[7][2].moves
 g = b.dup
+g.grid[5][3] = Knight.new("Knight", [5, 3], g, :black)
+g.grid[5][1] = Knight.new("Knight", [5, 1], g, :black)
+g.grid[5][2] = Pawn.new("Pawn", [5, 2], g, :white)
+p g.grid[5][2].moves
 # p g.grid
 # b.grid[5][3] = Knight.new("Knight", [5, 3], b, :black)
-g.grid[5][3] = Knight.new("Knight", [5, 3], g, :black)
-g.move!([5,3], [5,2])
-p g.grid[5][2].class
+# g.grid[5][3] = Knight.new("Knight", [5, 3], g, :black)
+# g.move!([5,3], [5,2])
+# p g.grid[5][2].class
 # p g.grid[5][3].valid_moves
 # p b.grid[5][3].moves
 # p b.grid[5][3].moves
