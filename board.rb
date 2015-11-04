@@ -51,6 +51,7 @@ class Board
     # new_grid[end_pos] = new_grid[start]
     # new_grid[start] = nil
     moving_piece = self[start_pos]
+
     if moving_piece.valid_moves.include?(end_pos)
       self.move!(start_pos, end_pos)
     elsif self[start_pos].move_into_check?(end_pos)
@@ -77,7 +78,15 @@ class Board
   end
 
   def checkmate?(color)
-    return in_check?(color) && valid_moves.empty?
+    # p in_check?(color)
+    return in_check?(color) && no_rescue_move?(color)
+  end
+
+  def no_rescue_move?(color)
+    surviving_pieces(color).each do |surviving_piece|
+      return false if surviving_piece.valid_moves.any?
+    end
+    return true
   end
 
   def dup
@@ -119,7 +128,7 @@ class Board
 
   def move!(start_pos, end_pos)
     #may need to delete the eaten piece from the memory
-    self[end_pos].piece_pos = nil
+    self[end_pos].piece_pos = nil unless self[end_pos] == nil
     self[end_pos] = self[start_pos]
     self[start_pos] = nil
     self[end_pos].piece_pos = end_pos
@@ -127,7 +136,7 @@ class Board
 
 end
 
-b = Board.new
+# b = Board.new
 # b.default_board
 # g = Board.new
 # g.default_board
@@ -135,11 +144,16 @@ b = Board.new
 # p b.grid[0][1].moves
 # b.grid[6][3] = Pawn.new("Pawn", [6, 3], self, :white)
 # p b.grid[7][2].moves
-g = b.dup
-g.grid[5][4] = Rook.new("Rook", [5, 4], g, :black)
-g.grid[5][3] = Rook.new("Rook", [5, 3], g, :black)
+# g = b.dup
+# g.grid[7][5] = nil
+# g.grid[7][6] = nil
+# g.grid[6][5] = nil
+# g.grid[7][7] = Rook.new("Rook", [7, 7], g, :black)
+# g.grid[5][4] = Rook.new("Rook", [5, 4], g, :black)
+# g.grid[5][3] = Rook.new("Rook", [5, 3], g, :black)
 # g.grid[5][2] = Pawn.new("Pawn", [5, 2], g, :white)
-g.move([6, 4], [5, 3])
+# g.move([6, 4], [5, 3])
+# p g.checkmate?(:white)
 # p g.grid
 # b.grid[5][3] = Knight.new("Knight", [5, 3], b, :black)
 # g.grid[5][3] = Knight.new("Knight", [5, 3], g, :black)
