@@ -96,23 +96,29 @@ class Display
     { background: bg, color: :black }
   end
 
-  def render(start_pos=nil)
+  def render(message, start_pos=nil)
+    # @cursor_pos = cursor_pos
     @start_pos = start_pos
     system("clear")
     puts "Chess"
     puts "Arrow keys, WASD, or vim to move, space or enter to confirm."
+    puts message
     build_grid.each { |row| puts row.join }
   end
   #########################
   # copied from ruby-cursor-game/lib/display.rb
 
-end
 
-b = Board.new
-dis = Display.new(b)
-result = nil
-while result.nil?
-  dis.render
-  result = dis.get_input
+
+
 end
-p result
+#
+# b = Board.new
+# dis = Display.new(b)
+# result = nil
+# while result.nil?
+#   dis.render
+#   result = dis.get_input
+#   p result
+# end
+# p result

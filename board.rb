@@ -1,4 +1,5 @@
 require_relative 'piece'
+require_relative 'error'
 require 'byebug'
 class Board
   attr_accessor :grid, :kings_ref
@@ -55,9 +56,9 @@ class Board
     if moving_piece.valid_moves.include?(end_pos)
       self.move!(start_pos, end_pos)
     elsif self[start_pos].move_into_check?(end_pos)
-      raise "Error: King will be in check!"
+      raise MoveError, "Error: King will be in check!"
     else
-      raise "Error: the piece cannot move to end position!"
+      raise MoveError, "Error: the piece cannot move to end position!"
     end
   end
 
