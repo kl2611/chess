@@ -1,7 +1,8 @@
 # Chess
-A fully functional chess game written in Ruby.
+A fully functional two-player chess game written in Ruby.
 
 ## Features
+- [x] Moveset validation algorithms to ensure full range of movement
 
 ## Future Updates
--[ ] Special techniques including Castling
+- [ ] Special techniques including Castling
