@@ -1,8 +1,7 @@
 # Chess
 A fully functional two-player chess game written in Ruby.
-
-## Features
-- [x] Moveset validation algorithms to ensure full range of movement
+<p />
+Clone the repo then type ruby chess.rb to start the game!
 
 ## Future Updates
 - [ ] Special techniques including Castling
